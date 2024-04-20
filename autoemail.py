@@ -19,7 +19,7 @@ smtp_port = int(config['SMTP']['port'])
 email_subject = config['EMAIL']['subject']
 attachment_folder = config['EMAIL']['attachment_folder']
 
-sender_email = 'info@trevigroupsrl.com'
+from_email = 'info@trevigroupsrl.com'
 
 # Reading the preconfigured email content
 with open('email_message.txt', 'r') as file:
@@ -28,7 +28,7 @@ with open('email_message.txt', 'r') as file:
 # Function to send email
 def send_email(to_email, name, subject, body, cc=None, bcc=None):
     msg = MIMEMultipart()
-    msg['From'] = sender_email
+    msg['From'] = from_email
     msg['To'] = to_email
     msg['Subject'] = subject
     if cc:
@@ -56,7 +56,7 @@ def send_email(to_email, name, subject, body, cc=None, bcc=None):
     server.login(email_user, email_password)
     text = msg.as_string()
     recipients = [to_email] + ([cc] if cc else []) + ([bcc] if bcc else [])
-    server.sendmail(sender_email, recipients, text)
+    server.sendmail(from_email, recipients, text)
     server.quit()
 
 # Reading CSV and sending emails
