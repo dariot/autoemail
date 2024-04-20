@@ -19,16 +19,22 @@ smtp_port = int(config['SMTP']['port'])
 email_subject = config['EMAIL']['subject']
 attachment_folder = config['EMAIL']['attachment_folder']
 
+sender_email = 'info@trevigroupsrl.com'
+
 # Reading the preconfigured email content
 with open('email_message.txt', 'r') as file:
     email_body = file.read()
 
 # Function to send email
-def send_email(to_email, name, subject, body):
+def send_email(to_email, name, subject, body, cc=None, bcc=None):
     msg = MIMEMultipart()
-    msg['From'] = email_user
+    msg['From'] = sender_email
     msg['To'] = to_email
     msg['Subject'] = subject
+    if cc:
+        msg['Cc'] = cc
+    if bcc:
+        msg['Bcc'] = bcc
 
     body = body.replace("{name}", name)  # Replace placeholder with actual name
     msg.attach(MIMEText(body, 'plain'))
@@ -49,7 +55,8 @@ def send_email(to_email, name, subject, body):
     server.starttls()
     server.login(email_user, email_password)
     text = msg.as_string()
-    server.sendmail(email_user, to_email, text)
+    recipients = [to_email] + ([cc] if cc else []) + ([bcc] if bcc else [])
+    server.sendmail(sender_email, recipients, text)
     server.quit()
 
 # Reading CSV and sending emails
@@ -57,7 +64,7 @@ with open('contacts.csv', newline='') as csvfile:
     reader = csv.reader(csvfile)
     next(reader, None)  # Skip header row
     for row in reader:
-        name, email = row[0], row[1]
-        send_email(email, name, email_subject, email_body)
+        name, email, cc, bcc = row[0], row[1], row[2], row[3]
+        send_email(email, name, email_subject, email_body, cc, bcc)
 
 print("Emails sent successfully.")
