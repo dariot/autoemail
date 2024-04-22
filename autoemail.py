@@ -22,12 +22,12 @@ attachment_folder = config['EMAIL']['attachment_folder']
 from_email = 'info@trevigroupsrl.com'
 
 # Reading the preconfigured email content
-with open('email_message.txt', 'r') as file:
+with open('email_message.html', 'r') as file:
     email_body = file.read()
 
 # Function to send email
 def send_email(to_email, name, subject, body, cc=None, bcc=None):
-    msg = MIMEMultipart()
+    msg = MIMEMultipart('alternative')
     msg['From'] = from_email
     msg['To'] = to_email
     msg['Subject'] = subject
@@ -37,7 +37,7 @@ def send_email(to_email, name, subject, body, cc=None, bcc=None):
         msg['Bcc'] = bcc
 
     body = body.replace("{name}", name)  # Replace placeholder with actual name
-    msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(body, 'html'))
 
     # Attach files from the specified folder
     if os.path.exists(attachment_folder) and os.path.isdir(attachment_folder):
