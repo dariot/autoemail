@@ -13,13 +13,12 @@ config.read('config.ini')
 
 email_user = config['EMAIL']['username']
 email_password = config['EMAIL']['password']
+from_address = config['EMAIL']['from_address']
 smtp_server = config['SMTP']['server']
 smtp_port = int(config['SMTP']['port'])
 
 email_subject = config['EMAIL']['subject']
 attachment_folder = config['EMAIL']['attachment_folder']
-
-from_email = 'info@trevigroupsrl.com'
 
 # Reading the preconfigured email content
 with open('email_message.html', 'r') as file:
@@ -28,7 +27,7 @@ with open('email_message.html', 'r') as file:
 # Function to send email
 def send_email(to_email, name, subject, body, cc=None, bcc=None):
     msg = MIMEMultipart('alternative')
-    msg['From'] = from_email
+    msg['From'] = from_address
     msg['To'] = to_email
     msg['Subject'] = subject
     if cc:
@@ -56,7 +55,7 @@ def send_email(to_email, name, subject, body, cc=None, bcc=None):
     server.login(email_user, email_password)
     text = msg.as_string()
     recipients = [to_email] + ([cc] if cc else []) + ([bcc] if bcc else [])
-    server.sendmail(from_email, recipients, text)
+    server.sendmail(from_address, recipients, text)
     server.quit()
 
 # Reading CSV and sending emails
