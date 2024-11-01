@@ -59,11 +59,24 @@ def send_email(to_email, name, subject, body, cc=None, bcc=None):
     server.quit()
 
 # Reading CSV and sending emails
+print("Begin sending emails...")
 with open('contacts.csv', newline='') as csvfile:
     reader = csv.reader(csvfile)
     next(reader, None)  # Skip header row
+    line_count = sum(1 for row in reader)
+
+    csvfile.seek(0)
+    next(reader, None)  # Skip header row again
+    current_row_index = 1
     for row in reader:
         name, email, cc, bcc = row[0], row[1], row[2], row[3]
-        send_email(email, name, email_subject, email_body, cc, bcc)
 
-print("Emails sent successfully.")
+        try:
+            print(f"[{current_row_index}/{line_count}] Sending email to {email}...")
+            send_email(email, name, email_subject, email_body, cc, bcc)
+        except Exception as e:
+            print(f"Failed to send email to {email}: {e}")
+
+        current_row_index += 1
+
+print("Finished sending emails")
