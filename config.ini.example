@@ -1,0 +1,10 @@
+[EMAIL]
+username = username
+password = password
+from_address = user@test.com
+subject = Test subject
+attachment_folder = /autoemail/attachments
+
+[SMTP]
+server = smtp.test.com
+port = 587
